@@ -2,32 +2,16 @@
 
 namespace virgo::diagnostic {
     auto Severity::ToString() const noexcept -> const char * {
-        switch (severity) {
-            case SeverityEnum::Error:
+        switch (this->value) {
+            case Value::Error:
                 return "error";
-            case SeverityEnum::Warning:
+            case Value::Warning:
                 return "warning";
-            case SeverityEnum::Info:
+            case Value::Info:
                 return "info";
-            case SeverityEnum::Note:
+            case Value::Note:
                 return "note";
         }
-    }
-
-    auto Severity::Error() noexcept -> Severity {
-        return {SeverityEnum::Error};
-    }
-
-    auto Severity::Info() noexcept -> Severity {
-        return {SeverityEnum::Info};
-    }
-
-    auto Severity::Note() noexcept -> Severity {
-        return {SeverityEnum::Note};
-    }
-
-    auto Severity::Warning() noexcept -> Severity {
-        return {SeverityEnum::Warning};
     }
 }
 
