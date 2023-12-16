@@ -1,1 +1,3 @@
-# Virgo - Fast and performant compiler for C programming language.
+# Virgo programming language
+
+My toy programming langauge written in C++.
