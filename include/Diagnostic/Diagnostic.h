@@ -14,7 +14,18 @@ namespace virgo::diagnostic {
             Note
         };
     public:
-        [[nodiscard]] auto ToString() const -> const char *;
+        [[nodiscard]] auto constexpr ToString() const -> const char * {
+            switch (value) {
+                case Error:
+                    return "error";
+                case Warning:
+                    return "warning";
+                case Info:
+                    return "info";
+                case Note:
+                    return "note";
+            }
+        }
     private:
         Value value;
     };
