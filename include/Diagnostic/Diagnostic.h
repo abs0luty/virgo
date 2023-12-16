@@ -14,7 +14,7 @@ namespace virgo::diagnostic {
             Note
         };
     public:
-        [[nodiscard]] auto ToString() const noexcept -> const char *;
+        [[nodiscard]] auto ToString() const -> const char *;
     private:
         Value value;
     };

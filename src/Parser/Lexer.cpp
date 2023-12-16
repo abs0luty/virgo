@@ -18,26 +18,23 @@ namespace virgo::parser {
         : filepath(filepath) {
         this->codePoints = common::CodePointsIterator(ReadFile(filepath));
         this->current = this->codePoints.NextCodePoint();
-        this->next = this->codePoints.NextCodePoint();
     }
 
     Lexer::Lexer(const std::string &filepath, const std::string &source)
             : filepath(filepath), codePoints(source) {
         this->current = this->codePoints.NextCodePoint();
-        this->next = this->codePoints.NextCodePoint();
     }
 
     Lexer::Lexer(const std::string &filepath, std::string &&source)
             : filepath(filepath), codePoints(std::move(source)) {
         this->current = this->codePoints.NextCodePoint();
-        this->next = this->codePoints.NextCodePoint();
     }
 
-    auto Lexer::IsEof() const noexcept -> bool {
+    auto Lexer::IsEof() const -> bool {
         return this->current == std::nullopt;
     }
 
-    auto Lexer::BytesInCurrentCodePoint() const noexcept(false) -> std::size_t {
+    auto Lexer::BytesInCurrentCodePoint() const -> std::size_t {
         auto codepoint = this->current.value();
 
         if (codepoint < 0x80) {
@@ -51,7 +48,7 @@ namespace virgo::parser {
         }
     }
 
-    auto Lexer::Advance() noexcept -> void {
+    auto Lexer::Advance() -> void {
         if (this->current != std::nullopt) {
             this->cursor.offset += this->BytesInCurrentCodePoint();
 
@@ -63,7 +60,6 @@ namespace virgo::parser {
             }
         }
 
-        this->current = this->next;
-        this->next = this->codePoints.NextCodePoint();
+        this->current = this->codePoints.NextCodePoint();
     }
 }

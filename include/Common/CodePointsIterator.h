@@ -6,17 +6,17 @@
 #include "Common/Span.h"
 
 namespace virgo::common {
-    class CodePointsIterator {
+    class CodePointsIterator final {
     public:
         CodePointsIterator() = default;
 
         explicit CodePointsIterator(const std::string& string) : string(string) {}
         explicit CodePointsIterator(std::string&& string) : string(std::move(string)) {}
 
-        auto NextCodePoint() noexcept -> std::optional<char32_t>;
+        auto NextCodePoint() -> std::optional<char32_t>;
     private:
         std::string string;
-        OffsetType offset = 0;
+        std::size_t offset = 0;
     };
 }
 

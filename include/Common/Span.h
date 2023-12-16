@@ -4,37 +4,35 @@
 #include <cstddef>
 
 namespace virgo::common {
-    using OffsetType = std::size_t;
-
     struct ByteLocation final {
         // Dummy value of byte location, which can be used as
         // a placeholder in tests.
         static const ByteLocation kDummy;
 
-        OffsetType line, column, offset;
+        std::size_t line, column, offset;
 
         // Returns the location of the byte located at the start
         // of the file.
-        [[nodiscard]] static auto StartOfFile() noexcept -> ByteLocation;
+        [[nodiscard]] static auto constexpr StartOfFile() -> ByteLocation;
 
         // Returns true if the location is dummy.
-        [[nodiscard]] auto IsDummy() const noexcept -> bool;
+        [[nodiscard]] auto constexpr IsDummy() const -> bool;
 
         // Returns the location shifted by the given relative offset.
         // Note: the column here is also changed, while the line number isn't.
-        [[nodiscard]] auto WithRelativeOffset(OffsetType) const noexcept -> ByteLocation;
+        [[nodiscard]] auto constexpr WithRelativeOffset(std::size_t) const -> ByteLocation;
 
         // Returns the location of the next byte relative to the current one.
-        [[nodiscard]] auto NextByteLocation() const noexcept -> ByteLocation;
+        [[nodiscard]] auto constexpr NextByteLocation() const -> ByteLocation;
 
         // Returns the location of the next second byte relative to the
         // current one.
-        [[nodiscard]] auto NextSecondByteLocation() const noexcept -> ByteLocation;
+        [[nodiscard]] auto constexpr NextSecondByteLocation() const -> ByteLocation;
 
-        auto operator==(const ByteLocation&) const noexcept -> bool;
+        auto operator==(const ByteLocation&) const -> bool;
 
         // Returns true if the location is not dummy.
-        explicit operator bool() const noexcept {
+        explicit operator bool() const {
             return !IsDummy();
         }
     };
@@ -47,21 +45,21 @@ namespace virgo::common {
         ByteLocation start, end;
 
         // Returns a span consisting of a single byte.
-        [[nodiscard]] static auto SingleByteSpan(ByteLocation) -> Span;
+        [[nodiscard]] static constexpr auto SingleByteSpan(ByteLocation) -> Span;
 
         // Returns a span consisting of two successive bytes.
-        [[nodiscard]] static auto TwoSuccessiveBytesSpan(ByteLocation) -> Span;
+        [[nodiscard]] static constexpr auto TwoSuccessiveBytesSpan(ByteLocation) -> Span;
 
         // Returns the length of the span (amount of bytes in it).
-        [[nodiscard]] auto Length() const noexcept -> OffsetType;
+        [[nodiscard]] auto constexpr Length() const -> std::size_t;
 
         // Returns true if the span is dummy.
-        [[nodiscard]] auto IsDummy() const noexcept -> bool;
+        [[nodiscard]] auto constexpr IsDummy() const -> bool;
 
-        auto operator==(const Span&) const noexcept -> bool;
+        auto operator==(const Span&) const -> bool;
 
         // Returns true if the span is not dummy.
-        explicit operator bool() const noexcept {
+        explicit operator bool() const {
             return !IsDummy();
         }
     };

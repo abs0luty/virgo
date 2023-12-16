@@ -8,7 +8,7 @@
 #include "Common/Span.h"
 
 namespace virgo::parser {
-    class Lexer {
+    class Lexer final {
     public:
         std::string filepath;
 
@@ -18,13 +18,13 @@ namespace virgo::parser {
     private:
         common::ByteLocation cursor = common::ByteLocation::StartOfFile();
         common::CodePointsIterator codePoints;
-        std::optional<char32_t> current, next;
+        std::optional<char32_t> current;
         std::string stringBuffer;
 
-        [[nodiscard]] auto IsEof() const noexcept -> bool;
-        [[nodiscard]] auto BytesInCurrentCodePoint() const noexcept(false) -> std::size_t;
+        [[nodiscard]] auto IsEof() const -> bool;
+        [[nodiscard]] auto BytesInCurrentCodePoint() const -> std::size_t;
 
-        auto Advance() noexcept -> void;
+        auto Advance() -> void;
     };
 }
 

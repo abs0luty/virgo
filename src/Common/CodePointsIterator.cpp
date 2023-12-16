@@ -1,7 +1,7 @@
 #include "Common/CodePointsIterator.h"
 
 namespace virgo::common {
-    auto CodePointsIterator::NextCodePoint() noexcept -> std::optional<char32_t> {
+    auto CodePointsIterator::NextCodePoint() -> std::optional<char32_t> {
         if (offset >= string.size()) {
             return std::nullopt;
         }
