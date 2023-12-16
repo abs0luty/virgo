@@ -22,6 +22,7 @@ namespace virgo::parser {
         // Returns the next token and updates the state of the lexer's
         // state machine (moves to the next Unicode code point).
         auto NextToken() -> ast::Token;
+
     private:
         // Location of the currently processed byte.
         common::ByteLocation cursor = common::ByteLocation::StartOfFile();
@@ -33,31 +34,13 @@ namespace virgo::parser {
         std::optional<char32_t> current;
 
         // Returns true if the end of the file has been reached.
-        [[nodiscard]] auto inline IsEof() const -> bool {
-            return this->current == std::nullopt;
-        }
+        [[nodiscard]] auto inline IsEof() const -> bool;
 
         // Returns the number of bytes in the current code point.
-        [[nodiscard]] auto inline BytesInCurrentCodePoint() const -> std::size_t {
-            auto codepoint = this->current.value();
-
-            if (codepoint < 0x80) {
-                return 1;
-            } else if (codepoint < 0x800) {
-                return 2;
-            } else if (codepoint < 0x10000) {
-                return 3;
-            } else {
-                return 4;
-            }
-        }
+        [[nodiscard]] auto inline BytesInCurrentCodePoint() const -> std::size_t;
 
         // Skip through whitespaces.
-        auto inline SkipWhitespaces() -> void {
-            while (!this->IsEof() && common::IsAsciiWhitespace(this->current.value())) {
-                this->Advance();
-            }
-        }
+        auto inline SkipWhitespaces() -> void;
 
         // Advance lexer's state to the next Unicode code point.
         auto Advance() -> void;

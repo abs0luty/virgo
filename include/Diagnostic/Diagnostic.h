@@ -13,7 +13,7 @@ namespace virgo::diagnostic {
             Info,
             Note
         };
-    public:
+
         [[nodiscard]] auto constexpr ToString() const -> const char * {
             switch (value) {
                 case Error:
@@ -26,6 +26,7 @@ namespace virgo::diagnostic {
                     return "note";
             }
         }
+
     private:
         Value value;
     };

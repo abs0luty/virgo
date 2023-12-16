@@ -31,32 +31,56 @@ namespace virgo::parser {
         this->current = this->codePoints.NextCodePoint();
     }
 
-    auto Lexer::Advance() -> void {
-        if (this->current != std::nullopt) {
-            this->cursor.offset += this->BytesInCurrentCodePoint();
+    auto inline Lexer::IsEof() const -> bool {
+        return current == std::nullopt;
+    }
 
-            if (this->current == '\n') {
-                this->cursor.line++;
-                this->cursor.column = 0;
+    auto inline Lexer::BytesInCurrentCodePoint() const -> std::size_t {
+        auto codepoint = this->current.value();
+
+        if (codepoint < 0x80) {
+            return 1;
+        } else if (codepoint < 0x800) {
+            return 2;
+        } else if (codepoint < 0x10000) {
+            return 3;
+        } else {
+            return 4;
+        }
+    }
+
+    auto inline Lexer::SkipWhitespaces() -> void {
+        while (!IsEof() && common::IsAsciiWhitespace(current.value())) {
+            Advance();
+        }
+    }
+
+    auto Lexer::Advance() -> void {
+        if (current != std::nullopt) {
+            cursor.offset += BytesInCurrentCodePoint();
+
+            if (current == '\n') {
+                cursor.line++;
+                cursor.column = 0;
             } else {
-                this->cursor.column++;
+                cursor.column++;
             }
         }
 
-        this->current = this->codePoints.NextCodePoint();
+        current = codePoints.NextCodePoint();
     }
 
     auto Lexer::NextToken() -> ast::Token {
         SkipWhitespaces();
 
-        if (this->IsEof()) {
+        if (IsEof()) {
             return {ast::TokenKind::EndOfFile,
-                    common::Span::SingleByteSpan(this->cursor)};
+                    common::Span::SingleByteSpan(cursor)};
         }
 
-        auto _current = this->current.value();
+        auto _current = current.value();
 
         return {ast::TokenKind::Error,
-                common::Span::SingleByteSpan(this->cursor)};
+                common::Span::SingleByteSpan(cursor)};
     }
 }

@@ -201,6 +201,7 @@ namespace virgo::ast {
         };
 
         [[nodiscard]] auto constexpr ToString() const -> const char*;
+
     private:
         Value value;
     };
