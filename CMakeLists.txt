@@ -15,7 +15,9 @@ add_library(virgo STATIC include/Common/Span.h
         src/Parser/Lexer.cpp
         src/Common/CodePointsIterator.cpp
         include/Common/Encoding.h
-        src/AST/Token.cpp)
+        src/AST/Token.cpp
+        include/Common/IO.h
+        src/Common/IO.cpp)
 target_include_directories(virgo PUBLIC include)
 target_include_directories(virgo PRIVATE src)
 target_link_libraries(virgo ${llvm_libs})

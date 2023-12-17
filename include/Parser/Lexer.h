@@ -15,7 +15,9 @@ namespace virgo::parser {
         // Path to the file being processed.
         std::string filepath;
 
-        explicit Lexer(const std::string& filepath);
+        // File contents.
+        std::string source;
+
         Lexer(const std::string& filepath, const std::string& source);
         Lexer(const std::string& filepath, std::string&& source);
 
@@ -39,11 +41,29 @@ namespace virgo::parser {
         // Returns the number of bytes in the current code point.
         [[nodiscard]] auto inline BytesInCurrentCodePoint() const -> std::size_t;
 
-        // Skip through whitespaces.
+        // Skips through whitespaces.
         auto inline SkipWhitespaces() -> void;
 
-        // Advance lexer's state to the next Unicode code point.
+        auto inline NextIdentifierToken() -> ast::Token;
+
+        auto inline NextStringToken() -> ast::Token;
+
+        auto inline NextCharacterToken() -> ast::Token;
+
+        auto inline NextCommentToken() -> ast::Token;
+
+        // Advances the lexer state to the next Unicode code point.
         auto Advance() -> void;
+
+        // Advances the lexer state to the next Unicode code point twice.
+        auto inline AdvanceTwice() -> void;
+
+        // Advances the lexer state to the next Unicode code point and
+        // returns the token with location being the current code point
+        // location in the source text
+        auto inline AdvanceWith(ast::TokenKind) -> ast::Token;
+
+        auto inline CurrentByteToken(ast::TokenKind) -> ast::Token;
     };
 }
 

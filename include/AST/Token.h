@@ -219,6 +219,7 @@ namespace virgo::ast {
             LexError error;
         };
 
+        Token(const Token& token);
         Token(TokenKind kind, common::Span span)
             : kind(kind), span(span) {}
         Token(TokenKind kind, common::Span span, const std::string& string)

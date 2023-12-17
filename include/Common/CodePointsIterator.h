@@ -8,15 +8,12 @@
 namespace virgo::common {
     class CodePointsIterator final {
     public:
-        CodePointsIterator() = default;
-
         explicit CodePointsIterator(const std::string& string) : string(string) {}
-        explicit CodePointsIterator(std::string&& string) : string(std::move(string)) {}
 
         auto NextCodePoint() -> std::optional<char32_t>;
 
     private:
-        std::string string;
+        const std::string& string;
         std::size_t offset = 0;
     };
 }
