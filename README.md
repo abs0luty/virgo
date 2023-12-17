@@ -1,3 +1,3 @@
 # Virgo programming language
 
-My toy programming langauge written in C++.
+My toy programming language written in C++.
