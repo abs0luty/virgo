@@ -2,83 +2,70 @@
 #define VIRGO_SPAN_H
 
 #include <cstddef>
+#include "Common/ByteLocation.h"
 
 namespace virgo::common {
-    struct ByteLocation final {
-        // Dummy value of byte location, which can be used as
-        // a placeholder in tests.
-        static const ByteLocation kDummy;
-
-        std::size_t line, column, offset;
-
-        // Returns the location of the byte located at the start
-        // of the file.
-        [[nodiscard]] static auto constexpr StartOfFile() -> ByteLocation {
-            return {1, 0, 0};
-        }
-
-        // Returns true if the location is dummy.
-        [[nodiscard]] auto constexpr IsDummy() const -> bool {
-            return this == &kDummy;
-        }
-
-        // Returns the location shifted by the given relative offset.
-        // Note: the column here is also changed, while the line number isn't.
-        [[nodiscard]] auto constexpr WithRelativeOffset(std::size_t relativeOffset) const -> ByteLocation {
-            return {line, column + relativeOffset, offset + relativeOffset};
-        }
-
-        // Returns the location of the next byte relative to the current one.
-        [[nodiscard]] auto constexpr NextByteLocation() const -> ByteLocation {
-            return WithRelativeOffset(1);
-        }
-
-        // Returns the location of the next second byte relative to the
-        // current one.
-        [[nodiscard]] auto constexpr NextSecondByteLocation() const -> ByteLocation {
-            return WithRelativeOffset(2);
-        }
-
-        [[nodiscard]] auto constexpr operator==(const ByteLocation& other) const -> bool {
-            return line == other.line
-                && column == other.column
-                && offset == other.offset;
-        }
-
-        // Returns true if the location is not dummy.
-        explicit operator bool() const {
-            return !IsDummy();
-        }
-    };
-
+    /*!
+     * A data structure representing a span of bytes in a source file.
+     */
     struct Span final {
-        // Dummy value of span, which can be used as a placeholder
-        // in tests.
-        static const Span kDummy;
-
         ByteLocation start, end;
 
-        // Returns a span consisting of a single byte.
-        [[nodiscard]] static constexpr auto SingleByteSpan(ByteLocation location) -> Span {
+        /**
+         * @return a dummy value of span, which can be used as a placeholder
+         *         in tests
+         * @note   <b>!!!
+         *         THIS SHOULD NOT BE USED IN ANY ACTUAL COMPILER'S CODE OTHER
+         *         THAN TESTS !!!</b>
+         */
+        static constexpr auto Dummy() -> Span {
+            return {ByteLocation::Dummy(), ByteLocation::Dummy()};
+        }
+
+        /**
+         * @param  location the location of the byte
+         * @return a span containing only the given byte
+         */
+        static constexpr auto SingleByteSpan(const ByteLocation& location) -> Span {
             return {location, location.NextByteLocation()};
         }
 
-        // Returns a span consisting of two successive bytes.
-        [[nodiscard]] static constexpr auto TwoSuccessiveBytesSpan(ByteLocation location) -> Span {
+        /**
+         * @param  location the location of the first byte
+         * @return a span consisting of two successive bytes
+         */
+        static constexpr auto TwoSuccessiveBytesSpan(const ByteLocation& location) -> Span {
             return {location, location.NextSecondByteLocation()};
         }
 
-        // Returns the length of the span (amount of bytes in it).
-        [[nodiscard]] auto constexpr Length() const -> std::size_t {
+        /**
+         * @param  location    the location of the first byte
+         * @param  bytesAmount the amount of bytes in the span
+         * @return a span consisting of multiple successive bytes
+         */
+        static constexpr auto MultipleSuccessiveBytesSpan(
+                const ByteLocation& location,
+                std::size_t bytesAmount) -> Span {
+            return {location, location.WithRelativeOffset(bytesAmount)};
+        }
+
+        /**
+         * @return the length of the span (amount of bytes in it)
+         */
+        [[nodiscard]] constexpr auto Length() const -> std::size_t {
             return end.offset - start.offset;
         }
 
-        // Returns true if the span is dummy.
-        [[nodiscard]] auto constexpr IsDummy() const -> bool {
-            return this == &kDummy;
+        /**
+         * @return true if the span is dummy
+         *         false otherwise
+         */
+        [[nodiscard]] constexpr auto IsDummy() const -> bool {
+            auto dummy = Dummy();
+            return this == &dummy;
         }
 
-        [[nodiscard]] auto constexpr operator==(const Span& other) const -> bool {
+        constexpr auto operator==(const Span& other) const -> bool {
             return start == other.start && end == other.end;
         }
 
@@ -88,8 +75,7 @@ namespace virgo::common {
         }
     };
 
-    const ByteLocation ByteLocation::kDummy = {0, 0, 0};
-    const Span Span::kDummy = {ByteLocation::kDummy, ByteLocation::kDummy};
+    auto PrintTo(const Span &span, std::ostream *stream) -> void;
 }
 
 #endif //VIRGO_SPAN_H

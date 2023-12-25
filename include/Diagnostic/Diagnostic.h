@@ -6,6 +6,11 @@
 #include "common/Span.h"
 
 namespace virgo::diagnostic {
+    /*!
+     * A severity of a diagnostic.
+     *
+     * @see Diagnostic
+     */
     struct Severity final {
         enum Value {
             Error,
@@ -14,7 +19,11 @@ namespace virgo::diagnostic {
             Note
         };
 
-        [[nodiscard]] auto constexpr ToString() const -> const char * {
+        /* implicit */ Severity(Value value) : value(value) {}
+
+        explicit constexpr operator Value() const { return value; }
+
+        [[nodiscard]] constexpr auto ToString() const -> const char * {
             switch (value) {
                 case Error:
                     return "error";
@@ -31,18 +40,29 @@ namespace virgo::diagnostic {
         Value value;
     };
 
-    class Diagnostic final {
+    /*!
+     * A data structure that represents a compiler diagnostic.
+     */
+    struct Diagnostic final {
     public:
-        // The severity of the diagnostic.
+        /**
+         * The severity of the diagnostic.
+         */
         Severity severity;
 
-        // The file in which the diagnostic occurred.
+        /**
+         * The file in which the diagnostic occurred.
+         */
         std::optional<std::string> filepath;
 
-        // The diagnostic message.
+        /**
+         * The diagnostic message.
+         */
         std::string message;
 
-        // Location in which the diagnostic occurred.
+        /**
+         * The location in file in which the diagnostic occurred.
+         */
         std::optional<common::Span> span;
 
         Diagnostic(Severity severity, std::string&& message) :
@@ -55,6 +75,11 @@ namespace virgo::diagnostic {
                    const std::string& filepath, common::Span span) :
                 severity(severity), message(std::move(message)),
                 filepath(filepath), span(span) {}
+        Diagnostic(Severity severity, std::string&& message,
+                   std::optional<std::string> filepath,
+                   std::optional<common::Span> span) :
+                severity(severity), message(std::move(message)),
+                filepath(std::move(filepath)), span(span) {}
     };
 }
 

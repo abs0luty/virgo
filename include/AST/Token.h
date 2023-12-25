@@ -5,171 +5,200 @@
 #include "Common/Span.h"
 
 namespace virgo::ast {
-    enum TokenKind {
-        // Arrow (`->`).
-        Arrow,
-        // Single ampersand (`&`).
-        Ampersand,
-        // Ampersand equal (`&=`).
-        AmpersandEq,
-        // Double ampersand (`&&`).
-        DoubleAmpersand,
-        // Asterisk (`*`).
-        Asterisk,
-        // Double asterisk (`**`).
-        DoubleAsterisk,
-        // Asterisk equal (`*=`).
-        AsteriskEq,
-        // Double asterisk equal (`**=`).
-        DoubleAsteriskEq,
-        // At sign (`@`).
-        At,
-        // Bang (`!`).
-        Bang,
-        // Close brace (`}`).
-        CloseBrace,
-        // Close bracket (`]`).
-        CloseBracket,
-        // Close parenthesis (`)`).
-        CloseParen,
-        // Colon (`:`).
-        Colon,
-        // Comma (`,`).
-        Comma,
-        // Dot (`.`).
-        Dot,
-        // Double dot (`..`).
-        DoubleDot,
-        // Equal (`=`).
-        Eq,
-        // Double equal (`==`).
-        DoubleEq,
-        // Greater than (`>`).
-        Greater,
-        // Greater than or equal (`>=`).
-        GreaterEq,
-        // Left shift (`<<`).
-        LeftShift,
-        // Less than (`<`).
-        Less,
-        // Less than or equal (`<=`).
-        LessEq,
-        // Minus (`-`).
-        Minus,
-        // Minus equal (`-=`).
-        MinusEq,
-        // Double minus (`--`).
-        DoubleMinus,
-        // Tilde (`~`).
-        Tilde,
-        // Bang equal (`!=`).
-        BangEq,
-        // Open brace (`{`).
-        OpenBrace,
-        // Open bracket (`[`).
-        OpenBracket,
-        // Open parenthesis (`(`).
-        OpenParen,
-        // Or (`|`).
-        Or,
-        // Or equal (`|=`).
-        OrEq,
-        // Double or (`||`).
-        DoubleOr,
-        // Percent (`%`).
-        Percent,
-        // Percent equal (`%=`).
-        PercentEq,
-        // Plus (`+`).
-        Plus,
-        // Plus equal (`+=`).
-        PlusEq,
-        // Double plus (`++`).
-        DoublePlus,
-        // Question mark (`?`).
-        Question,
-        // Right shift (`>>`).
-        RightShift,
-        // Semicolon (`;`).
-        Semicolon,
-        // Slash (`/`).
-        Slash,
-        // Slash equal (`/=`).
-        SlashEq,
-        // Caret (`^`).
-        Caret,
-        // Caret equal (`^=`).
-        CaretEq,
-        // Hash (`#`).
-        Hash,
-        // Underscore (`_`).
-        Underscore,
-        // Keyword `as`.
-        As,
-        // Keyword `defer`.
-        Defer,
-        // Keyword `else`.
-        Else,
-        // Keyword `enum`.
-        Enum,
-        // Keyword `for`.
-        For,
-        // Keyword `fun`.
-        Fun,
-        // Keyword `if`.
-        If,
-        // Keyword `pub`.
-        Pub,
-        // Keyword `return`.
-        Return,
-        // Keyword `struct`.
-        Struct,
-        // Keyword `type`.
-        Type,
-        // Keyword `let`.
-        Let,
-        // Keyword `where`.
-        Where,
-        // Keyword `while`.
-        While,
-        // Keyword `match`.
-        Match,
-        // Keyword `import`.
-        Import,
-        // Keyword `break`.
-        Break,
-        // Keyword `continue`.
-        Continue,
-        // Keyword `dyn`.
-        Dyn,
-        // Keyword `loop`.
-        Loop,
-        // Keyword `interface`.
-        Interface,
-        // Keyword `implements`.
-        Implements,
-        // Boolean literal (`true` or `false`).
-        Boolean,
-        // Character literal,
-        Character,
-        // Corresponds to any comment that is not a doc comment.
-        Comment,
-        // Module level doc comment.
-        ModuleComment,
-        // Item level doc comment.
-        ItemComment,
-        // Identifier.
-        Identifier,
-        // Integer literal.
-        Integer,
-        // Floating point literal.
-        Float,
-        // String literal.
-        String,
-        // End of file.
-        EndOfFile,
-        // Error.
-        Error,
+    class TokenKind final {
+    public:
+        enum Value {
+            // Arrow (`->`).
+            Arrow,
+            // Single ampersand (`&`).
+            Ampersand,
+            // Ampersand equal (`&=`).
+            AmpersandEq,
+            // Double ampersand (`&&`).
+            DoubleAmpersand,
+            // Asterisk (`*`).
+            Asterisk,
+            // Double asterisk (`**`).
+            DoubleAsterisk,
+            // Asterisk equal (`*=`).
+            AsteriskEq,
+            // Double asterisk equal (`**=`).
+            DoubleAsteriskEq,
+            // At sign (`@`).
+            At,
+            // Bang (`!`).
+            Bang,
+            // Close brace (`}`).
+            CloseBrace,
+            // Close bracket (`]`).
+            CloseBracket,
+            // Close parenthesis (`)`).
+            CloseParen,
+            // Colon (`:`).
+            Colon,
+            // Comma (`,`).
+            Comma,
+            // Dot (`.`).
+            Dot,
+            // Double dot (`..`).
+            DoubleDot,
+            // Equal (`=`).
+            Eq,
+            // Double equal (`==`).
+            DoubleEq,
+            // Greater than (`>`).
+            Greater,
+            // Greater than or equal (`>=`).
+            GreaterEq,
+            // Left shift (`<<`).
+            LeftShift,
+            // Less than (`<`).
+            Less,
+            // Less than or equal (`<=`).
+            LessEq,
+            // Minus (`-`).
+            Minus,
+            // Minus equal (`-=`).
+            MinusEq,
+            // Double minus (`--`).
+            DoubleMinus,
+            // Tilde (`~`).
+            Tilde,
+            // Bang equal (`!=`).
+            BangEq,
+            // Open brace (`{`).
+            OpenBrace,
+            // Open bracket (`[`).
+            OpenBracket,
+            // Open parenthesis (`(`).
+            OpenParen,
+            // Or (`|`).
+            Or,
+            // Or equal (`|=`).
+            OrEq,
+            // Double or (`||`).
+            DoubleOr,
+            // Percent (`%`).
+            Percent,
+            // Percent equal (`%=`).
+            PercentEq,
+            // Plus (`+`).
+            Plus,
+            // Plus equal (`+=`).
+            PlusEq,
+            // Double plus (`++`).
+            DoublePlus,
+            // Question mark (`?`).
+            Question,
+            // Right shift (`>>`).
+            RightShift,
+            // Semicolon (`;`).
+            Semicolon,
+            // Slash (`/`).
+            Slash,
+            // Slash equal (`/=`).
+            SlashEq,
+            // Caret (`^`).
+            Caret,
+            // Caret equal (`^=`).
+            CaretEq,
+            // Hash (`#`).
+            Hash,
+            // Underscore (`_`).
+            Underscore,
+            // Keyword `as`.
+            As,
+            // Keyword `defer`.
+            Defer,
+            // Keyword `else`.
+            Else,
+            // Keyword `enum`.
+            Enum,
+            // Keyword `for`.
+            For,
+            // Keyword `fun`.
+            Fun,
+            // Keyword `if`.
+            If,
+            // Keyword `pub`.
+            Pub,
+            // Keyword `return`.
+            Return,
+            // Keyword `struct`.
+            Struct,
+            // Keyword `type`.
+            Type,
+            // Keyword `let`.
+            Let,
+            // Keyword `where`.
+            Where,
+            // Keyword `while`.
+            While,
+            // Keyword `match`.
+            Match,
+            // Keyword `import`.
+            Import,
+            // Keyword `break`.
+            Break,
+            // Keyword `continue`.
+            Continue,
+            // Keyword `dyn`.
+            Dyn,
+            // Keyword `loop`.
+            Loop,
+            // Keyword `interface`.
+            Interface,
+            // Keyword `implements`.
+            Implements,
+            // Boolean literal (`true` or `false`).
+            Boolean,
+            // Character literal,
+            Character,
+            // Corresponds to any comment that is not a doc comment.
+            Comment,
+            // Module level doc comment.
+            ModuleComment,
+            // Item level doc comment.
+            ItemComment,
+            // Identifier.
+            Identifier,
+            // Integer literal.
+            Integer,
+            // Floating point literal.
+            Float,
+            // String literal.
+            String,
+            // End of file.
+            EndOfFile,
+            // Error.
+            Error,
+        };
+
+        constexpr TokenKind() = default;
+
+        /* implicit */ constexpr TokenKind(Value value) : value(value) {}
+
+        constexpr operator Value() const {
+            return value;
+        }
+
+        [[nodiscard]] constexpr auto ToString() const -> const char*;
+
+        [[nodiscard]] constexpr auto RequiresStringToBeStored() const -> bool {
+            switch (value) {
+                case String:
+                case Identifier:
+                case Comment:
+                case ItemComment:
+                case ModuleComment:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+    private:
+        Value value;
     };
 
     struct LexError final {
@@ -200,7 +229,11 @@ namespace virgo::ast {
             UnterminatedWrappedIdentifier,
         };
 
-        [[nodiscard]] auto constexpr ToString() const -> const char*;
+        constexpr auto operator==(const LexError& other) const -> bool {
+            return value == other.value;
+        };
+
+        [[nodiscard]] constexpr auto ToString() const -> const char*;
 
     private:
         Value value;
@@ -208,8 +241,8 @@ namespace virgo::ast {
 
     class Token final {
     public:
-        TokenKind kind;
-        common::Span span;
+        TokenKind kind{};
+        common::Span span{};
         union {
             std::string string{};
             std::int64_t integer;
@@ -219,31 +252,70 @@ namespace virgo::ast {
             LexError error;
         };
 
+        Token() {}
         Token(const Token& token);
+
         Token(TokenKind kind, common::Span span)
             : kind(kind), span(span) {}
+
         Token(TokenKind kind, common::Span span, const std::string& string)
             : kind(kind), span(span), string(string) {}
         Token(TokenKind kind, common::Span span, std::string&& string)
             : kind(kind), span(span), string(std::move(string)) {}
+
         Token(common::Span span, int64_t integer)
             : kind(TokenKind::Integer), span(span), integer(integer) {}
         Token(common::Span span, double float_)
             : kind(TokenKind::Float), span(span), float_(float_) {}
+
         Token(common::Span span, char32_t character)
             : kind(TokenKind::Character), span(span), character(character) {}
+
         Token(common::Span span, bool boolean)
             : kind(TokenKind::Boolean), span(span), boolean(boolean) {}
+
         Token(common::Span span, LexError error)
             : kind(TokenKind::Error), span(span), error(error) {}
 
-        [[nodiscard]] auto constexpr ToString() const -> const char*;
+        auto operator=(const Token& token) -> void {
+          kind = token.kind;
+          span = token.span;
+          string = token.string;
+          integer = token.integer;
+          float_ = token.float_;
+          character = token.character;
+          boolean = token.boolean;
+          error = token.error;
+        }
+
+        constexpr auto operator==(const Token& token) const -> bool {
+            if (kind != token.kind)
+                return false;
+
+            if (kind.RequiresStringToBeStored())
+                return string == token.string;
+            else if (token.kind == TokenKind::Integer)
+                return integer == token.integer;
+            else if (token.kind == TokenKind::Float)
+                return float_ == token.float_;
+            else if (token.kind == TokenKind::Character)
+                return character == token.character;
+            else if (token.kind == TokenKind::Boolean)
+                return boolean == token.boolean;
+            else if (token.kind == TokenKind::Error)
+                return error == token.error;
+
+            return true;
+        }
 
         ~Token();
     };
 
-    auto constexpr Token::ToString() const -> const char * {
-        switch (this->kind) {
+    auto PrintTo(const TokenKind& kind, std::ostream* os) -> void;
+    auto PrintTo(const Token& token, std::ostream* os) -> void;
+
+    constexpr auto TokenKind::ToString() const -> const char * {
+        switch (this->value) {
             case Identifier:
                 return "identifier";
             case Integer:
@@ -257,7 +329,7 @@ namespace virgo::ast {
             case String:
                 return "string";
             case Error:
-                return error.ToString();
+                return "error token";
             case EndOfFile:
                 return "end of file";
             case Arrow:
@@ -411,7 +483,7 @@ namespace virgo::ast {
         }
     }
 
-    auto constexpr LexError::ToString() const -> const char * {
+    constexpr auto LexError::ToString() const -> const char * {
         switch (this->value) {
             case DigitDoesNotCorrespondToBase:
                 return "digit doesn't correspond to the base";

@@ -1,19 +1,13 @@
 #include <fstream>
+#include <cassert>
 #include "Parser/Lexer.h"
 
 namespace virgo::parser {
     using namespace virgo::ast;
 
-    Lexer::Lexer(const std::string &filepath, const std::string &source)
-            : filepath(filepath), codePoints(source) {
-        this->current = this->codePoints.NextCodePoint();
-        this->source = source;
-    }
-
-    Lexer::Lexer(const std::string &filepath, std::string &&source)
-            : filepath(filepath), codePoints(source) {
-        this->current = this->codePoints.NextCodePoint();
-        this->source = std::move(source);
+    Lexer::Lexer(const std::string &filepath, std::string_view source)
+            : filepath(filepath), source(source), codePoints(source) {
+        current = codePoints.NextCodePoint();
     }
 
     auto inline Lexer::IsEof() const -> bool {
@@ -21,7 +15,9 @@ namespace virgo::parser {
     }
 
     auto inline Lexer::BytesInCurrentCodePoint() const -> std::size_t {
-        auto codepoint = this->current.value();
+        assert(current);
+
+        auto codepoint = *current;
 
         if (codepoint < 0x80) {
             return 1;
@@ -69,10 +65,37 @@ namespace virgo::parser {
         return token;
     }
 
+    auto inline Lexer::AdvanceWithPreviousByte(virgo::ast::TokenKind kind) -> Token {
+        Token token{
+                kind,
+                common::Span::TwoSuccessiveBytesSpan(cursor.PreviousByteLocation()),
+        };
+        Advance();
+
+        return token;
+    }
+
+    auto inline Lexer::AdvanceWithSecondPreviousByte(ast::TokenKind kind) -> ast::Token {
+        Token token{
+                kind,
+                common::Span::MultipleSuccessiveBytesSpan(cursor.PreviousSecondByteLocation(), 3),
+        };
+        Advance();
+
+        return token;
+    }
+
     auto inline Lexer::CurrentByteToken(TokenKind kind) -> Token {
         return {
-            kind,
-            common::Span::SingleByteSpan(cursor),
+                kind,
+                common::Span::SingleByteSpan(cursor)
+        };
+    }
+
+    auto inline Lexer::PreviousByteToken(TokenKind kind) -> Token {
+        return {
+                kind,
+                common::Span::SingleByteSpan(cursor.PreviousByteLocation()),
         };
     }
 
@@ -83,10 +106,16 @@ namespace virgo::parser {
             Advance();
         }
 
-        return {Identifier,
+        return {TokenKind::Identifier,
                 {startLocation, cursor},
-                source.substr(startLocation.offset, cursor.offset)};
+                std::string(source.substr(startLocation.offset, cursor.offset))};
     }
+
+    // TODO: Implement
+    auto inline Lexer::NextStringToken() -> Token { throw std::runtime_error("Not implemented"); }
+
+    // TODO: Implement
+    auto inline Lexer::NextCharacterToken() -> Token { throw std::runtime_error("Not implemented"); }
 
     auto inline Lexer::NextCommentToken() -> Token {
         Advance(); // Skip the second `/`
@@ -97,13 +126,13 @@ namespace virgo::parser {
             Advance();
         }
 
-        auto comment = source.substr(startLocation.offset, cursor.offset);
+        auto comment = std::string(source.substr(startLocation.offset, cursor.offset));
 
         if (comment.rfind('/', 0) == 0) {
             comment = comment.substr(1);
 
             return {
-                ItemComment,
+                TokenKind::ItemComment,
                 {startLocation, cursor},
                 comment
             };
@@ -111,13 +140,13 @@ namespace virgo::parser {
             comment = comment.substr(1);
 
             return {
-                ModuleComment,
+                TokenKind::ModuleComment,
                 {startLocation, cursor},
                 comment
             };
         } else {
             return {
-                Comment,
+                TokenKind::Comment,
                 {startLocation, cursor},
                 comment
             };
@@ -126,7 +155,7 @@ namespace virgo::parser {
 
 #define SINGLE_CHAR_TOKEN(chr, kind) \
     else if (current == chr) { \
-        return AdvanceWith(kind); \
+        return AdvanceWith(TokenKind::kind); \
     }
 #define SINGLE_CHAR_TRIGER(chr, parse_fn) \
     else if (current == chr) { \
@@ -137,7 +166,7 @@ namespace virgo::parser {
         SkipWhitespaces();
 
         if (IsEof()) [[unlikely]]
-            return CurrentByteToken(EndOfFile);
+            return CurrentByteToken(TokenKind::EndOfFile);
 
         SINGLE_CHAR_TOKEN(':', Colon)
         SINGLE_CHAR_TOKEN('@', At)
@@ -152,25 +181,26 @@ namespace virgo::parser {
         SINGLE_CHAR_TOKEN(']', CloseBracket)
         SINGLE_CHAR_TOKEN('~', Tilde)
         SINGLE_CHAR_TOKEN(',', Comma)
+        SINGLE_CHAR_TOKEN('.', Dot)
         SINGLE_CHAR_TOKEN(';', Semicolon)
         else if (current == '+') {
             Advance();
 
             if (current == '+')
-                return AdvanceWith(DoublePlus);
+                return AdvanceWithPreviousByte(TokenKind::DoublePlus);
             else if (current == '=')
-                return AdvanceWith(PlusEq);
+                return AdvanceWithPreviousByte(TokenKind::PlusEq);
             else
-                return CurrentByteToken(Plus);
+                return PreviousByteToken(TokenKind::Plus);
         } else if (current == '-') {
             Advance();
 
             if (current == '-')
-                return AdvanceWith(DoubleMinus);
+                return AdvanceWithPreviousByte(TokenKind::DoubleMinus);
             else if (current == '=')
-                return AdvanceWith(MinusEq);
+                return AdvanceWithPreviousByte(TokenKind::MinusEq);
             else
-                return CurrentByteToken(Minus);
+                return PreviousByteToken(TokenKind::Minus);
         } else if (current == '*') {
             Advance();
 
@@ -178,34 +208,33 @@ namespace virgo::parser {
                 Advance();
 
                 if (current == '=')
-                    return AdvanceWith(DoubleAsteriskEq);
+                    return AdvanceWithSecondPreviousByte(TokenKind::DoubleAsteriskEq);
                 else
-                    return CurrentByteToken(DoubleAsterisk);
+                    return AdvanceWithPreviousByte(TokenKind::DoubleAsterisk);
             } else if (current == '=')
-                return AdvanceWith(AsteriskEq);
+                return AdvanceWithPreviousByte(TokenKind::AsteriskEq);
             else
-                return CurrentByteToken(Asterisk);
+                return PreviousByteToken(TokenKind::Asterisk);
         } else if (current == '/') {
             Advance();
 
             if (current == '/') {
                 return NextCommentToken();
             } else
-                return CurrentByteToken(Slash);
+                return PreviousByteToken(TokenKind::Slash);
         }
         else if (current == '^') {
             Advance();
 
             if (current == '=')
-                return AdvanceWith(CaretEq);
+                return AdvanceWithPreviousByte(TokenKind::CaretEq);
             else
-                return CurrentByteToken(Caret);
+                return PreviousByteToken(TokenKind::Caret);
         }
-
-        if (common::IsXIDStart(current)) {
+        else if (common::IsXIDStart(current)) {
             return NextIdentifierToken();
         }
 
-        return AdvanceWith(Error);
+        return AdvanceWith(TokenKind::Error);
     }
 }
