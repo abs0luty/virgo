@@ -8,6 +8,7 @@ namespace virgo::diagnostic {
 
     auto Diagnostics::AddDiagnostic(Diagnostic &&diagnostic) -> void {
         if (!diagnostic.filepath) {
+            std::lock_guard<std::mutex> lock(globalDiagnosticsLock);
             globalDiagnostics.push_back(std::move(diagnostic));
             return;
         }
@@ -24,8 +25,7 @@ namespace virgo::diagnostic {
 
         auto filepath = *diagnostic.filepath;
 
-        fileDiagnosticsLocks[filepath].lock();
+        std::lock_guard<std::mutex> lock(fileDiagnosticsLocks[filepath]);
         fileDiagnostics[filepath].push_back(std::move(diagnostic));
-        fileDiagnosticsLocks[filepath].unlock();
     }
 }

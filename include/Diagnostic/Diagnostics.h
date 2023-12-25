@@ -44,6 +44,11 @@ namespace virgo::diagnostic {
         std::vector<Diagnostic> globalDiagnostics;
 
         /**
+         * Lock for the global diagnostics data.
+         */
+        std::mutex globalDiagnosticsLock;
+
+        /**
          * Map of file paths to diagnostics data.
          */
         std::map<std::string, std::vector<Diagnostic>> fileDiagnostics;
