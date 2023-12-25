@@ -15,7 +15,6 @@ namespace virgo::diagnostic {
         enum Value {
             Error,
             Warning,
-            Info,
             Note
         };
 
@@ -29,8 +28,6 @@ namespace virgo::diagnostic {
                     return "error";
                 case Warning:
                     return "warning";
-                case Info:
-                    return "info";
                 case Note:
                     return "note";
             }

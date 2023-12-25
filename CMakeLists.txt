@@ -27,7 +27,11 @@ add_library(virgo STATIC include/Common/Span.h
         src/Common/IO.cpp
         include/Common/ByteLocation.h
         src/Common/ByteLocation.cpp
-        include/Common/Error.h)
+        include/Common/Error.h
+        include/Diagnostic/DiagnosticsEmitter.h
+        include/Diagnostic/Diagnostics.h
+        src/Diagnostic/Diagnostics.cpp
+        src/Diagnostic/DiagnosticsEmitter.cpp)
 target_include_directories(virgo PUBLIC include)
 target_include_directories(virgo PRIVATE src)
 target_link_libraries(virgo ${llvm_libs})
