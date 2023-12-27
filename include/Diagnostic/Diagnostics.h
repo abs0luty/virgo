@@ -15,25 +15,22 @@ namespace virgo::diagnostic {
      */
     class Diagnostics final {
     public:
-        Diagnostics() {}
+        Diagnostics() = default;
 
         /**
-         * @brief   Copy and then add a diagnostic to the diagnostics list
+         * @brief   Construct a diagnostic struct from given arguments,
+         *          and add it to the diagnostics list
          * @details Locks the mutex associated with the given file path
          *          or when no file path is given locks the global diagnostics
          *          mutex
-         * @param   diagnostic Diagnostic to add
+         * @param   args Arguments used to construct the diagnostic struct
+         * @tparam  Args Type of arguments used to construct the diagnostic struct
          */
-        auto AddDiagnostic(const Diagnostic& diagnostic) -> void;
-
-        /**
-         * @brief   Add a diagnostic to the diagnostics list
-         * @details Locks the mutex associated with the given file path
-         *          or when no file path is given locks the global diagnostics
-         *          mutex
-         * @param   diagnostic Diagnostic to add
-         */
-        auto AddDiagnostic(Diagnostic &&diagnostic) -> void;
+        template <class ...Args,
+                  class = std::enable_if_t<std::is_constructible_v<Diagnostic, Args...>>>
+        auto AddDiagnostic(Args&&... args) -> void {
+            AddDiagnosticImpl(Diagnostic(std::forward<Args>(args)...));
+        }
 
         ~Diagnostics() = default;
 
@@ -51,12 +48,14 @@ namespace virgo::diagnostic {
         /**
          * Map of file paths to diagnostics data.
          */
-        std::map<std::string, std::vector<Diagnostic>> fileDiagnostics;
+        std::map<std::string_view, std::vector<Diagnostic>> fileDiagnostics;
 
         /**
          * Map of file paths to locks for related diagnostics data.
          */
-        std::unordered_map<std::string, std::mutex> fileDiagnosticsLocks;
+        std::unordered_map<std::string_view, std::mutex> fileDiagnosticsLocks;
+
+        auto AddDiagnosticImpl(Diagnostic&& diagnostics) -> void;
     };
 }
 

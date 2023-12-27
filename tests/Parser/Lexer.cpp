@@ -4,10 +4,12 @@
 using namespace virgo::parser;
 using namespace virgo::ast;
 using namespace virgo::common;
+using namespace virgo::diagnostic;
 
-#define START_LEXER_TEST(source) \
-    Lexer lexer("test", source); \
-    Token token;
+#define START_LEXER_TEST(source)               \
+    Diagnostics diagnostics;                   \
+    Lexer lexer("test", source, diagnostics);  \
+    Token token;                               \
     ByteLocation start_, end_;
 
 #define CHECK_NEXT_TOKEN(kind_v, start_v, end_v) \

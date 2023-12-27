@@ -11,7 +11,7 @@ namespace virgo::common {
      */
     class FailedToReadFileError final: public Error {
     public:
-        explicit FailedToReadFileError(const std::string &filepath)
+        explicit FailedToReadFileError(std::string_view filepath)
         : Error("Cannot read the file", filepath) {}
     };
 
@@ -21,7 +21,7 @@ namespace virgo::common {
      * @throws FailedToReadFileError if the file could not be read
      * @return The contents of the file
      */
-    std::string ReadFile(const std::string &filepath);
+    std::string ReadFile(std::string_view filepath);
 }
 
 #endif //VIRGO_IO_H

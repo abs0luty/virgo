@@ -5,8 +5,10 @@
 namespace virgo::parser {
     using namespace virgo::ast;
 
-    Lexer::Lexer(const std::string &filepath, std::string_view source)
-            : filepath(filepath), source(source), codePoints(source) {
+    Lexer::Lexer(std::string_view filepath, std::string_view source,
+                 diagnostic::Diagnostics& diagnostics)
+            : filepath(filepath), source(source), codePoints(source),
+              diagnostics(diagnostics) {
         current = codePoints.NextCodePoint();
     }
 

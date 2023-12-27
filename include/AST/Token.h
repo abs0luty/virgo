@@ -178,12 +178,22 @@ namespace virgo::ast {
 
         /* implicit */ constexpr TokenKind(Value value) : value(value) {}
 
-        constexpr operator Value() const {
+        /* implicit */ constexpr operator Value() const {
             return value;
         }
 
+        explicit operator bool() const = delete;
+
+        /**
+         * @return name of the token kind
+         */
         [[nodiscard]] constexpr auto ToString() const -> const char*;
 
+        /**
+         * @return true if the token kind requires a string buffer to be allocated
+         *         for storing the token's value
+         *         false otherwise
+         */
         [[nodiscard]] constexpr auto RequiresStringToBeStored() const -> bool {
             switch (value) {
                 case String:
@@ -229,10 +239,17 @@ namespace virgo::ast {
             UnterminatedWrappedIdentifier,
         };
 
-        constexpr auto operator==(const LexError& other) const -> bool {
-            return value == other.value;
-        };
+        constexpr LexError() = default;
 
+        /* implicit */ constexpr LexError(Value value) : value(value) {}
+
+        /* implicit */ constexpr operator Value() const {
+            return value;
+        }
+
+        /**
+         * @return error message
+         */
         [[nodiscard]] constexpr auto ToString() const -> const char*;
 
     private:
@@ -258,9 +275,7 @@ namespace virgo::ast {
         Token(TokenKind kind, common::Span span)
             : kind(kind), span(span) {}
 
-        Token(TokenKind kind, common::Span span, const std::string& string)
-            : kind(kind), span(span), string(string) {}
-        Token(TokenKind kind, common::Span span, std::string&& string)
+        Token(TokenKind kind, common::Span span, std::string string)
             : kind(kind), span(span), string(std::move(string)) {}
 
         Token(common::Span span, int64_t integer)
@@ -277,7 +292,7 @@ namespace virgo::ast {
         Token(common::Span span, LexError error)
             : kind(TokenKind::Error), span(span), error(error) {}
 
-        auto operator=(const Token& token) -> void {
+        auto operator=(const Token& token) -> Token& {
           kind = token.kind;
           span = token.span;
           string = token.string;
@@ -286,6 +301,8 @@ namespace virgo::ast {
           character = token.character;
           boolean = token.boolean;
           error = token.error;
+
+          return *this;
         }
 
         constexpr auto operator==(const Token& token) const -> bool {

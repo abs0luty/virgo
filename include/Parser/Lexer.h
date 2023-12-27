@@ -7,6 +7,7 @@
 #include "AST/Token.h"
 #include "Common/Encoding.h"
 #include "Common/Span.h"
+#include "Diagnostic/Diagnostics.h"
 
 namespace virgo::parser {
     /*!
@@ -19,14 +20,15 @@ namespace virgo::parser {
         /**
          * Path to the source file being currently processed
          */
-        std::string filepath;
+        std::string_view filepath;
 
         /**
          * Source file contents
          */
         std::string_view source;
 
-        Lexer(const std::string& filepath, std::string_view source);
+        Lexer(std::string_view filepath, std::string_view source,
+              diagnostic::Diagnostics& diagnostics);
 
         /**
          * @brief  Returns the next token and updates the state of the lexer's
@@ -50,6 +52,11 @@ namespace virgo::parser {
          * Current Unicode code point
          */
         std::optional<char32_t> current;
+
+        /**
+         * Global diagnostics storage
+         */
+        diagnostic::Diagnostics& diagnostics;
 
         /**
          * @return true if the end of the file has been reached

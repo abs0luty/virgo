@@ -2,12 +2,12 @@
 #include "Common/IO.h"
 
 namespace virgo::common {
-    std::string ReadFile(const std::string &filepath) {
+    std::string ReadFile(std::string_view filepath) {
         std::ifstream file;
         file.exceptions(std::ifstream::failbit);
 
         try {
-            file.open(filepath, std::ios::in);
+            file.open(filepath.data(), std::ios::in);
         } catch (...) {
             throw FailedToReadFileError(filepath);
         }

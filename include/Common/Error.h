@@ -20,7 +20,7 @@ namespace virgo::common {
         /**
          * The file in which the error occurred (optional)
          */
-        std::optional<std::string> filepath;
+        std::string_view filepath;
 
         /**
          * The error message
@@ -28,22 +28,16 @@ namespace virgo::common {
         std::string message;
 
         // Global compiler error
-        explicit Error(std::string&& message)
+        explicit Error(std::string message)
                 : message(std::move(message)) {}
-        explicit Error(const std::string& message)
-                : message(message) {}
 
         // Filepath is specified
-        Error(std::string&& message, const std::string& filepath)
+        Error(std::string message, std::string_view filepath)
                 : message(std::move(message)), filepath(filepath) {}
-        Error(const std::string& message, const std::string& filepath)
-                : message(message), filepath(filepath) {}
 
         // Span is also specified
-        Error(std::string&& message, Span span, const std::string& filepath)
-                : message(std::move(message)), span(span), filepath(filepath) {}
-        Error(const std::string& message, Span span, const std::string& filepath)
-                : message(message), span(span), filepath(filepath) {}
+        Error(std::string message, std::string_view filepath, common::Span span)
+                : message(std::move(message)), filepath(filepath), span(span) {}
 
         [[nodiscard]] auto what() const -> const char * override {
             return message.c_str();
@@ -65,10 +59,6 @@ namespace virgo::common {
 
         ~Error() override {
             message.~basic_string();
-
-            if (filepath) {
-                (*filepath).~basic_string();
-            }
         }
     };
 }
