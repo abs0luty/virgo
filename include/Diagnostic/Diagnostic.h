@@ -3,7 +3,8 @@
 
 #include <string>
 #include <optional>
-#include "common/Span.h"
+#include "Common/Span.h"
+#include "Common/Templates.h"
 
 namespace virgo::diagnostic {
     /*!
@@ -18,7 +19,9 @@ namespace virgo::diagnostic {
             Note
         };
 
-        /* implicit */ Severity(Value value) : value(value) {}
+        constexpr Severity() = default;
+
+        /* implicit */ constexpr Severity(Value value) : value(value) {}
 
         /* implicit */ constexpr operator Value() const { return value; }
 
@@ -45,7 +48,7 @@ namespace virgo::diagnostic {
         /**
          * The severity of the diagnostic.
          */
-        Severity severity;
+        Severity severity{};
 
         /**
          * The file in which the diagnostic occurred.
@@ -83,6 +86,19 @@ namespace virgo::diagnostic {
                    std::optional<common::Span> span) :
                 severity(severity), message(std::move(message)),
                 filepath(filepath), span(span) {}
+
+        template <class T>
+        using ToDiagnostic = decltype(std::declval<T>().ToDiagnostic());
+
+        template <class T>
+        static constexpr bool HasToDiagnostic = common::IsDetected<T, ToDiagnostic>::value;
+
+        // when T has member function "ToDiagnostic"
+        template<class T,
+                 class = std::enable_if_t<HasToDiagnostic<T>>>
+        explicit Diagnostic(const T& other) {
+            *this = other.ToDiagnostic();
+        }
     };
 }
 
