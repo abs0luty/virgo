@@ -36,22 +36,22 @@ namespace virgo::diagnostic {
 
     private:
         /**
-         * Diagnostics not associated with any file.
+         * Diagnostics not associated with any file
          */
         std::vector<Diagnostic> globalDiagnostics;
 
         /**
-         * Lock for the global diagnostics data.
+         * Lock for the global diagnostics data
          */
         std::mutex globalDiagnosticsLock;
 
         /**
-         * Map of file paths to diagnostics data.
+         * Map of file paths to diagnostics data
          */
         std::map<std::string_view, std::vector<Diagnostic>> fileDiagnostics;
 
         /**
-         * Map of file paths to locks for related diagnostics data.
+         * Map of file paths to locks for related diagnostics data
          */
         std::unordered_map<std::string_view, std::mutex> fileDiagnosticsLocks;
 
