@@ -53,7 +53,7 @@ namespace virgo::common {
          * @return the location of the previous byte relative to the
          *         current one
          */
-        [[nodiscard]] constexpr auto PreviousByteLocation() const -> ByteLocation {
+        [[nodiscard]] constexpr auto OfPreviousByte() const -> ByteLocation {
             return WithRelativeOffset(-1);
         }
 
@@ -61,7 +61,7 @@ namespace virgo::common {
          * @return the location of the previous second byte relative to the
          *         current one
          */
-        [[nodiscard]] constexpr auto PreviousSecondByteLocation() const -> ByteLocation {
+        [[nodiscard]] constexpr auto OfPreviousSecondByte() const -> ByteLocation {
             return WithRelativeOffset(-2);
         }
 
@@ -69,7 +69,7 @@ namespace virgo::common {
          * @return the location of the next byte relative to the
          *         current one
          */
-        [[nodiscard]] constexpr auto NextByteLocation() const -> ByteLocation {
+        [[nodiscard]] constexpr auto OfNextByte() const -> ByteLocation {
             return WithRelativeOffset(1);
         }
 
@@ -77,7 +77,7 @@ namespace virgo::common {
          * @return the location of the next second byte relative to the
          *         current one
          */
-        [[nodiscard]] constexpr auto NextSecondByteLocation() const -> ByteLocation {
+        [[nodiscard]] constexpr auto OfNextSecondByte() const -> ByteLocation {
             return WithRelativeOffset(2);
         }
 

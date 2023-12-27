@@ -26,16 +26,16 @@ namespace virgo::common {
          * @param  location the location of the byte
          * @return a span containing only the given byte
          */
-        static constexpr auto SingleByteSpan(const ByteLocation& location) -> Span {
-            return {location, location.NextByteLocation()};
+        static constexpr auto OfSingleByte(const ByteLocation& location) -> Span {
+            return {location, location.OfNextByte()};
         }
 
         /**
          * @param  location the location of the first byte
          * @return a span consisting of two successive bytes
          */
-        static constexpr auto TwoSuccessiveBytesSpan(const ByteLocation& location) -> Span {
-            return {location, location.NextSecondByteLocation()};
+        static constexpr auto OfTwoSuccessiveBytes(const ByteLocation& location) -> Span {
+            return {location, location.OfNextSecondByte()};
         }
 
         /**
@@ -43,7 +43,7 @@ namespace virgo::common {
          * @param  bytesAmount the amount of bytes in the span
          * @return a span consisting of multiple successive bytes
          */
-        static constexpr auto MultipleSuccessiveBytesSpan(
+        static constexpr auto OfMultipleSuccessiveBytes(
                 const ByteLocation& location,
                 std::size_t bytesAmount) -> Span {
             return {location, location.WithRelativeOffset(bytesAmount)};

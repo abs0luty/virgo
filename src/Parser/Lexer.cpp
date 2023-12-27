@@ -60,7 +60,7 @@ namespace virgo::parser {
     auto inline Lexer::AdvanceWith(TokenKind kind) -> Token {
         Token token {
             kind,
-            common::Span::SingleByteSpan(cursor),
+            common::Span::OfSingleByte(cursor),
         };
         Advance();
 
@@ -70,7 +70,7 @@ namespace virgo::parser {
     auto inline Lexer::AdvanceWithPreviousByte(virgo::ast::TokenKind kind) -> Token {
         Token token{
                 kind,
-                common::Span::TwoSuccessiveBytesSpan(cursor.PreviousByteLocation()),
+                common::Span::OfTwoSuccessiveBytes(cursor.OfPreviousByte()),
         };
         Advance();
 
@@ -80,7 +80,7 @@ namespace virgo::parser {
     auto inline Lexer::AdvanceWithSecondPreviousByte(ast::TokenKind kind) -> ast::Token {
         Token token{
                 kind,
-                common::Span::MultipleSuccessiveBytesSpan(cursor.PreviousSecondByteLocation(), 3),
+                common::Span::OfMultipleSuccessiveBytes(cursor.OfPreviousSecondByte(), 3),
         };
         Advance();
 
@@ -90,14 +90,14 @@ namespace virgo::parser {
     auto inline Lexer::CurrentByteToken(TokenKind kind) -> Token {
         return {
                 kind,
-                common::Span::SingleByteSpan(cursor)
+                common::Span::OfSingleByte(cursor)
         };
     }
 
     auto inline Lexer::PreviousByteToken(TokenKind kind) -> Token {
         return {
                 kind,
-                common::Span::SingleByteSpan(cursor.PreviousByteLocation()),
+                common::Span::OfSingleByte(cursor.OfPreviousByte()),
         };
     }
 
