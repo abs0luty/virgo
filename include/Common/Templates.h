@@ -7,15 +7,15 @@ namespace virgo::common {
 // https://stackoverflow.com/a/30848101
 #if __GNUC__ < 5 && ! defined __clang__
     // https://stackoverflow.com/a/28967049/1353549
-    template <typename...>
+    template <class ...>
     struct voider
     {
         using type = void;
     };
-    template <typename...Ts>
-    using void_t = typename voider<Ts...>::type;
+    template <class ...Ts>
+    using void_t = class voider<Ts...>::type;
 #else
-    template <typename...>
+    template <class ...>
 using void_t = void;
 #endif
 
